@@ -5,10 +5,16 @@ interaction = Launchpad::Interaction.new(:device_name => "Launchpad S")
 @home_path = "/Users/beth/Projects/launchpad/audio"
 
 @clip_pids = Array.new
-@clip_paths
+@clips = Array.new
+@clip_paths = Array.new
 
 def get_audio_clips
-    @clip_paths = Dir["#{@home_path}/**/*.wav"]
+     paths = Dir["#{@home_path}/**/*.wav"]
+
+     paths.each do |path|
+         index = path.gsub("#{@home_path}/", "").gsub(".wav", "")
+         @clips << index
+     end
 end
 
 def play(row, column)
@@ -66,8 +72,11 @@ interaction.response_to(:mixer, :up) do |interaction, action|
 end
 
 def button_has_clip?(row, column)
-    false
+    @clips.include? "#{row}_#{column}"
 end
+
+#get all clips
+get_audio_clips
 
 (0..7).each do |x|
     (0..7).each do |y|
@@ -78,9 +87,6 @@ end
         end
     end
 end
-
-#get all clips
-get_audio_clips
 
 # start interacting
 interaction.start
